@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>Factura | Sistema X</title>
+  <link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+  <link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+  <style>
+    /* Ocultamos el menú lateral y los botones al imprimir */
+    @media print {
+      .main-sidebar, .main-header, .no-print { display: none !important; }
+      .content-wrapper { margin-left: 0 !important; }
+    }
+  </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+
+  <!-- Navbar & Sidebar -->
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <ul class="navbar-nav"><li class="nav-item"><a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a></li></ul>
+    <ul class="navbar-nav ml-auto"><li class="nav-item d-flex align-items-center mr-3"><i class="fas fa-user mr-2"></i> <span class="text-dark font-weight-bold" th:text="${nombreUsuario}"></span></li></ul>
+  </nav>
+
+  <aside class="main-sidebar sidebar-light-primary elevation-4">
+    <a href="#" class="brand-link text-center"><span class="brand-text font-weight-light" style="font-size: 1.5rem; color: black;">Sistema X</span></a>
+    <div class="sidebar">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column">
+          <li class="nav-item"><a th:href="@{/dashboard}" class="nav-link"><i class="nav-icon fas fa-home"></i><p>Inicio</p></a></li>
+          <li class="nav-item"><a th:href="@{/productos}" class="nav-link"><i class="nav-icon fas fa-box"></i><p>Productos</p></a></li>
+          <li class="nav-item"><a th:href="@{/ventas}" class="nav-link"><i class="nav-icon fas fa-shopping-cart"></i><p>Ventas</p></a></li>
+          <li class="nav-item"><a th:href="@{/facturacion}" class="nav-link active"><i class="nav-icon fas fa-file-invoice-dollar"></i><p>Facturación</p></a></li>
+          <li class="nav-item border-top"><a th:href="@{/logout}" class="nav-link"><p class="text-dark">Salir</p></a></li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <div class="content-wrapper bg-white">
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6"><h1>Factura Comercial</h1></div>
+          <div class="col-sm-6 text-right text-muted small">Inicio / Facturación / Factura</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Nota informativa que se oculta al imprimir -->
+            <div class="callout callout-info no-print">
+              <h5><i class="fas fa-info"></i> Nota:</h5>
+              Esta página está optimizada para ser impresa. Haz clic en el botón "Imprimir" en la parte inferior para probarlo.
+            </div>
+
+            <!-- Contenido Principal: Factura -->
+            <div class="invoice p-3 mb-3 border">
+
+              <!-- Título de la factura -->
+              <div class="row">
+                <div class="col-12">
+                  <h4>
+                    <i class="fas fa-store"></i> Tienda de Electrónicos X, S.A. de C.V.
+                    <small class="float-right" th:text="'Fecha: ' + ${#temporals.format(venta.fecha, 'dd/MM/yyyy')}"></small>
+                  </h4>
+                </div>
+              </div>
+
+              <!-- Información de remitente y destinatario -->
+              <div class="row invoice-info mt-4">
+                <div class="col-sm-4 invoice-col">
+                  De:
+                  <address>
+                    <strong>Tienda X (Matriz)</strong><br>
+                    Av. Tecnológico #123, Col. Centro<br>
+                    Zacatecas, Zac. 98000<br>
+                    Teléfono: (492) 123-4567<br>
+                    Correo: contacto@tiendax.com
+                  </address>
+                </div>
+                <div class="col-sm-4 invoice-col">
+                  Para (Cliente):
+                  <address>
+                    <strong th:text="${venta.nombreCliente}">Nombre del Cliente</strong><br>
+                    Domicilio Conocido<br>
+                    México<br>
+                  </address>
+                </div>
+                <div class="col-sm-4 invoice-col">
+                  <br>
+                  <b th:text="'Factura #' + ${venta.id + 7600}">Factura #0000</b><br>
+                  <br>
+                  <b th:text="'ID Orden: V-' + ${venta.id}">ID Orden: V-0</b><br>
+                  <b th:text="'Vencimiento: ' + ${#temporals.format(venta.fecha, 'dd/MM/yyyy')}">Vencimiento: </b><br>
+                  <b>Cuenta:</b> 968-34567
+                </div>
+              </div>
+
+              <!-- Tabla de Productos -->
+              <div class="row mt-4">
+                <div class="col-12 table-responsive">
+                  <table class="table table-striped">
+                    <thead class="bg-dark text-white">
+                    <tr>
+                      <th>Cant.</th>
+                      <th>Producto / Servicio</th>
+                      <th>Descripción</th>
+                      <th>Precio Unitario</th>
+                      <th>Subtotal</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="item, iterStat : ${items}">
+                      <td th:text="${item.cantidad}">1</td>
+                      <td th:text="${item.producto}">Producto</td>
+                      <td th:text="${item.descripcion}">Descripción del producto</td>
+                      <td th:text="'$' + ${item.precioUnitario}">$0.00</td>
+                      <td th:text="'$' + ${item.subtotal}">$0.00</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Fila de Totales -->
+              <div class="row mt-4">
+                <div class="col-6">
+                  <p class="lead">Métodos de Pago Aceptados:</p>
+                  <img th:src="@{/dist/img/credit/visa.png}" alt="Visa">
+                  <img th:src="@{/dist/img/credit/mastercard.png}" alt="Mastercard">
+                  <img th:src="@{/dist/img/credit/paypal2.png}" alt="Paypal">
+                  <p class="text-muted well well-sm shadow-none" style="margin-top: 10px;">
+                    El pago de esta factura deberá realizarse en una sola exhibición. Los productos electrónicos cuentan con 1 año de garantía directamente con el fabricante conservando este comprobante.
+                  </p>
+                </div>
+
+                <div class="col-6">
+                  <p class="lead" th:text="'Total a Pagar al ' + ${#temporals.format(venta.fecha, 'dd/MM/yyyy')}"></p>
+                  <div class="table-responsive">
+                    <table class="table">
+                      <tr>
+                        <th style="width:50%">Subtotal:</th>
+                        <td th:text="'$' + ${subtotalFactura}">$0.00</td>
+                      </tr>
+                      <tr>
+                        <th>IVA (16%)</th>
+                        <td th:text="'$' + ${ivaFactura}">$0.00</td>
+                      </tr>
+                      <tr class="bg-light">
+                        <th>Total Final:</th>
+                        <td class="font-weight-bold" th:text="'$' + ${venta.total}">$0.00</td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- BOTONES DE ACCIÓN (Se ocultan al imprimir) -->
+              <div class="row no-print mt-5">
+                <div class="col-12">
+                  <!-- Botón NUEVO para regresar a la facturación -->
+                  <a th:href="@{/facturacion}" class="btn btn-secondary mr-2">
+                    <i class="fas fa-arrow-left"></i> Regresar
+                  </a>
+
+                  <a href="#" onclick="window.print();" class="btn btn-default">
+                    <i class="fas fa-print"></i> Imprimir Factura
+                  </a>
+
+                  <button type="button" class="btn btn-success float-right" style="background-color: #28a745; border-color: #28a745;">
+                    <i class="far fa-credit-card"></i> Registrar Pago
+                  </button>
+
+                  <button type="button" class="btn btn-primary float-right" style="margin-right: 5px; background-color: #007bff; border-color: #007bff;" onclick="window.print();">
+                    <i class="fas fa-download"></i> Generar PDF
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/dist/js/adminlte.min.js}"></script>
+</body>
+</html>

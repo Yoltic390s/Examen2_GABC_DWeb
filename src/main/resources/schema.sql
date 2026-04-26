@@ -1,0 +1,32 @@
+CREATE TABLE IF NOT EXISTS usuarios (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(100) NOT NULL,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL
+    );
+
+CREATE TABLE IF NOT EXISTS productos (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    descripcion VARCHAR(255),
+    precio DECIMAL(10,2) NOT NULL,
+    stock INT NOT NULL
+    );
+
+CREATE TABLE IF NOT EXISTS ventas (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nombre_cliente VARCHAR(150) NOT NULL,
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    total DECIMAL(10,2) DEFAULT 0.00
+    );
+
+CREATE TABLE IF NOT EXISTS detalle_ventas (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    venta_id BIGINT NOT NULL,
+    producto_id BIGINT NOT NULL,
+    cantidad INT NOT NULL,
+    precio_unitario DECIMAL(10,2) NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (venta_id) REFERENCES ventas(id) ON DELETE CASCADE,
+    FOREIGN KEY (producto_id) REFERENCES productos(id) ON DELETE CASCADE
+    );
