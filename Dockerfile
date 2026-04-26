@@ -1,4 +1,7 @@
+FROM eclipse-temurin:25-jdk
+
 FROM eclipse-temurin:17-jdk
+
 WORKDIR /app
 
 COPY . .
